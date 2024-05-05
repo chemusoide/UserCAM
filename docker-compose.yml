@@ -21,7 +21,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: usercam-be-rust
+    container_name: usercam-api
     ports:
       - "8000:8000"
     volumes:
@@ -33,7 +33,7 @@ services:
 
   frontend:
     image: node:14-alpine
-    container_name: usercam-fe-react
+    container_name: usercam-fe
     ports:
       - "3000:3000"
     volumes:
