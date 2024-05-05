@@ -1,24 +1,12 @@
 # Archivos de entorno
 .env
 
-# Directorios de dependencias
-node_modules/
-backend/target/
-
 # Directorios de volúmenes Docker
 mysql_data/
-
-# Archivos de logs
-*.log
-
-# Archivos de mapas de código fuente (Source Maps) para JavaScript
-*.map
-
-# Directorios y archivos de compilación
-/dist
-/build
-/tmp
 
 # Archivos temporales o de sistema
 *.swp
 .DS_Store
+
+# Logs generales
+*.log
