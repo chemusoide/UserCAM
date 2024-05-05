@@ -7,33 +7,50 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
+  build-and-test:
     runs-on: ubuntu-latest
+
     steps:
+    # Checkout code
     - uses: actions/checkout@v4
-    - name: Setup Rust
+
+    # Setup Rust environment
+    - name: Setup Rust Stable
       uses: actions-rs/toolchain@v1
       with:
         toolchain: stable
         default: true
-        profile: minimal
-    - name: Build and Check Rust
+        components: rustfmt, clippy
+
+    # Check Rust code
+    - name: Check Rust code with cargo
       run: |
         cd backend
-        cargo build --verbose
+        cargo check --verbose
+
+    # Run Rust tests
+    - name: Run Rust tests with cargo
+      run: |
+        cd backend
         cargo test --verbose
-    - name: Setup Node
+
+    # Setup Node.js environment
+    - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'
         cache: 'npm'
         cache-dependency-path: 'frontend/package-lock.json'
 
-    - name: Install and Build React App
+    # Install and build React application
+    - name: Install and build React App
       run: |
         cd frontend
         npm install
         npm run build
-    - name: Run Tests
+
+    # Run React tests
+    - name: Run React tests
       run: |
+        cd frontend
         npm test
