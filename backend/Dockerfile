@@ -1,5 +1,5 @@
 # Utiliza la imagen oficial de Rust como base
-FROM rust:1.56 as builder
+FROM rust:1.78 as builder
 
 # Crea un nuevo directorio para la aplicación
 WORKDIR /usr/src/usercam-api
@@ -8,20 +8,28 @@ WORKDIR /usr/src/usercam-api
 # Esto incluye Cargo.toml y posiblemente Cargo.lock
 COPY Cargo.toml Cargo.lock ./
 
-# Este truco con un proyecto ficticio permite cachear las dependencias compiladas,
-# reduciendo el tiempo de compilaciones subsiguientes si las dependencias no cambian
-RUN mkdir src/ && \
-    echo "fn main() {println!(\"if you see this, the build broke\")}" > src/main.rs && \
-    cargo build --release && \
-    rm -f target/release/deps/usercam_api*
+# Instala las dependencias necesarias para compilar diesel_cli
+RUN apt-get update && \
+    apt-get install -y default-libmysqlclient-dev && \
+    apt-get clean
+
+# Instala diesel_cli
+RUN cargo install diesel_cli --no-default-features --features mysql
+
+# Crea un directorio src si no existe y compila las dependencias primero
+# para aprovechar la caché de Docker
+RUN mkdir -p src/ && \
+    echo "// dummy file" > src/lib.rs && \
+    cargo build --release --verbose
 
 # Ahora copia el resto de la aplicación y compila de nuevo.
 # Esto asegura que solo se recompilen los archivos que cambian.
 COPY . .
-RUN touch src/main.rs && cargo build --release
+RUN cargo build --release --verbose
 
-# Etapa de la imagen final
-FROM debian:buster-slim
+# Etapa de la imagen final.
+# Reutilizamos la misma imagen para evitar problemas de dependencias.
+FROM rust:1.78
 
 # Actualiza los paquetes y limpia para minimizar el tamaño de la imagen
 RUN apt-get update && \
@@ -32,6 +40,7 @@ RUN apt-get update && \
 
 # Copia el ejecutable desde el contenedor de compilación al contenedor final
 COPY --from=builder /usr/src/usercam-api/target/release/usercam-api /usr/local/bin/usercam-api
+COPY --from=builder /usr/local/cargo/bin/diesel /usr/local/bin/diesel
 
 # Define el comando que se ejecutará cuando tu contenedor inicie
 CMD ["usercam-api"]

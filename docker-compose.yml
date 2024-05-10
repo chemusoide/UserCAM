@@ -28,6 +28,9 @@ services:
       - ./backend:/app/src
     environment:
       NODE_ENV: ${NODE_ENV}
+      DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db/${MYSQL_DATABASE}
+    env_file: 
+      - ../.env
     networks:
       - usercam
 
