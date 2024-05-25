@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  db:
+  mysql:
     image: mysql:latest
     container_name: usercam-mysql
     ports:
@@ -28,7 +28,7 @@ services:
       - ./backend:/app/src
     environment:
       NODE_ENV: ${NODE_ENV}
-      DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db/${MYSQL_DATABASE}
+      DATABASE_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql/${MYSQL_DATABASE}
     env_file: 
       - ../.env
     networks:

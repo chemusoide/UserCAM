@@ -16,19 +16,22 @@ RUN apt-get update && \
 # Instala diesel_cli
 RUN cargo install diesel_cli --no-default-features --features mysql
 
-# Crea un directorio src si no existe y compila las dependencias primero
-# para aprovechar la caché de Docker
+# Copia todos los archivos de fuente
+COPY . .
+
+# Compila las dependencias para aprovechar la caché de Docker
 RUN mkdir -p src/ && \
     echo "// dummy file" > src/lib.rs && \
-    cargo build --release --verbose
+    cargo build --release --verbose && \
+    rm src/lib.rs
 
-# Ahora copia el resto de la aplicación y compila de nuevo.
-# Esto asegura que solo se recompilen los archivos que cambian.
-COPY . .
+# Compila el proyecto entero
 RUN cargo build --release --verbose
 
+# Compila el binario generate_password
+RUN cargo build --release --bin generate_password
+
 # Etapa de la imagen final.
-# Reutilizamos la misma imagen para evitar problemas de dependencias.
 FROM rust:1.78
 
 # Actualiza los paquetes y limpia para minimizar el tamaño de la imagen
@@ -40,6 +43,7 @@ RUN apt-get update && \
 
 # Copia el ejecutable desde el contenedor de compilación al contenedor final
 COPY --from=builder /usr/src/usercam-api/target/release/usercam-api /usr/local/bin/usercam-api
+COPY --from=builder /usr/src/usercam-api/target/release/generate_password /usr/local/bin/generate_password
 COPY --from=builder /usr/local/cargo/bin/diesel /usr/local/bin/diesel
 
 # Define el comando que se ejecutará cuando tu contenedor inicie

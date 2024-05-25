@@ -3,8 +3,8 @@ CREATE TABLE roles (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nombre VARCHAR(255),
     obs TEXT,
-    fechaCreacion DATETIME,
-    fechaModificacion DATETIME,
+    fechaCreacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fechaModificacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     usuarioCreacion VARCHAR(255),
     usuarioModificacion VARCHAR(255)
 );
@@ -21,9 +21,11 @@ CREATE TABLE usuarios (
     fechanacimiento DATE,
     dni VARCHAR(255),
     rolId INT,
+    password VARCHAR(255),
+    imagen_url VARCHAR(255),
     obs TEXT,
-    fechaCreacion DATETIME,
-    fechaModificacion DATETIME,
+    fechaCreacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fechaModificacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     usuarioCreacion VARCHAR(255),
     usuarioModificacion VARCHAR(255),
     FOREIGN KEY (rolId) REFERENCES roles(id)
@@ -39,8 +41,8 @@ CREATE TABLE dojos (
     direccion TEXT,
     telefono VARCHAR(255),
     obs TEXT,
-    fechaCreacion DATETIME,
-    fechaModificacion DATETIME,
+    fechaCreacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fechaModificacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     usuarioCreacion VARCHAR(255),
     usuarioModificacion VARCHAR(255)
 );
@@ -55,8 +57,8 @@ CREATE TABLE alumnos (
     fechaBaja DATE,
     dojoCho BOOLEAN DEFAULT FALSE,
     obs TEXT,
-    fechaCreacion DATETIME,
-    fechaModificacion DATETIME,
+    fechaCreacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fechaModificacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     usuarioCreacion VARCHAR(255),
     usuarioModificacion VARCHAR(255),
     FOREIGN KEY (usuarioId) REFERENCES usuarios(id),
@@ -74,8 +76,8 @@ CREATE TABLE grados (
     nombre VARCHAR(255) NOT NULL,
     fechaObtencion DATE,
     obs TEXT,
-    fechaCreacion DATETIME,
-    fechaModificacion DATETIME,
+    fechaCreacion DATETIME DEFAULT CURRENT_TIMESTAMP,
+    fechaModificacion DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     usuarioCreacion VARCHAR(255),
     usuarioModificacion VARCHAR(255)
 );
