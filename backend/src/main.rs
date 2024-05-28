@@ -4,12 +4,15 @@ use actix_web::{web, App, HttpServer, Responder};
 use std::io::Result;
 use crate::config::Config;
 use crate::handlers::{usuarios, roles, dojos, alumnos, grados};
+use env_logger::Env;
+use crate::middleware::auth::Authentication;
 
 mod config;
 mod db;
 mod models;
 mod schema;
 mod handlers;
+mod middleware;
 
 async fn greet() -> impl Responder {
     "Hello, world!"
@@ -17,11 +20,14 @@ async fn greet() -> impl Responder {
 
 #[actix_web::main]
 async fn main() -> Result<()> {
+    env_logger::init_from_env(Env::default().default_filter_or("info"));
+
     let config = Config::new();
     let pool = config.create_db_pool();
 
     HttpServer::new(move || {
         App::new()
+            .wrap(Authentication) 
             .app_data(web::Data::new(pool.clone()))
             .route("/", web::get().to(greet))
             .service(

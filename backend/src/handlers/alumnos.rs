@@ -6,7 +6,7 @@ use crate::models::{Alumno, NewAlumno, Pool};
 use crate::schema::alumnos::dsl::*;
 use serde::{Deserialize, Serialize};
 use chrono::NaiveDate;
-use crate::schema::alumnos::{id, usuario_id, dojo_id, dojo_cho, fecha_alta, fecha_baja, obs, usuario_creacion, usuario_modificacion, fecha_modificacion};
+use crate::schema::alumnos::{id, usuario_id, dojo_id, dojo_cho, fecha_alta, fecha_baja, obs, usuario_modificacion, fecha_modificacion};
 
 #[derive(Deserialize, Serialize)]
 pub struct AlumnoInput {
