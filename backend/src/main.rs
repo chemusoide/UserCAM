@@ -3,7 +3,7 @@
 use actix_web::{web, App, HttpServer, Responder};
 use std::io::Result;
 use crate::config::Config;
-use crate::handlers::{usuarios, roles, dojos, alumnos, grados};
+use crate::handlers::{usuarios, roles, dojos, alumnos, grados, auth};
 use env_logger::Env;
 use crate::middleware::auth::Authentication;
 
@@ -30,6 +30,10 @@ async fn main() -> Result<()> {
             .wrap(Authentication) 
             .app_data(web::Data::new(pool.clone()))
             .route("/", web::get().to(greet))
+            .service(
+                web::scope("/auth")
+                    .route("/login", web::post().to(auth::login))
+            )
             .service(
                 web::scope("/usuarios")
                     .route("", web::post().to(usuarios::create_usuario))

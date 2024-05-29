@@ -11,7 +11,7 @@ struct Claims {
 }
 
 #[derive(Deserialize)]
-struct AuthData {
+pub struct AuthData {
     username: String,
     password: String,
 }
